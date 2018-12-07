@@ -29,14 +29,14 @@ class BadipcrawlerSpider(scrapy.Spider):
         catColsLst = self.genCols(catNameLst)
         logging.log(logging.INFO, str(catColsLst))
 
-        '''
+
         body = response.body
         self.count = self.count + 1
         iplist = re.findall(self.pttr_ip,body)
         for ip in iplist:
             rest_call = self.rest_prefix + ip
             logging.log(logging.INFO, ".....calling this REST GET method : " + rest_call)
-            #yield scrapy.http.Request(url=rest_call, callback=self.retr_ipinfo)
+            yield scrapy.http.Request(url=rest_call, callback=self.writeToCSV)
 
         next_pg_lnk_list = response.xpath('//*[@id="content"]/p[2]/a/@href').extract()
         if len(next_pg_lnk_list) > 1:
@@ -51,7 +51,7 @@ class BadipcrawlerSpider(scrapy.Spider):
             spider = self
             scrapy.signals.spider_closed(spider, reason)
             return
-            '''
+
 
 
     def getCatNames(self):
@@ -108,8 +108,11 @@ class BadipcrawlerSpider(scrapy.Spider):
         collst.append('suc')
         collst.append('IP')
         collst.append('Listed')
-
         return collst
+
+
+    def writeToCSV(self,response):
+        logging.log(logging.INFO, response.body)
 
 
 '''

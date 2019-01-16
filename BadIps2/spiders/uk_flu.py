@@ -11,8 +11,8 @@ import datetime
 class flu_rider(scrapy.Spider):
     cutoff_year = 2019
     name = 'uk_flu'
-    start_urls = ['https://www.gov.uk/government/statistics/weekly-national-flu-reports-2018-to-2019-season']
-
+    #start_urls = ['https://www.gov.uk/government/statistics/weekly-national-flu-reports-2018-to-2019-season']
+    start_urls = ['https://www.gov.uk/government/collections/weekly-national-flu-reports']
 
     def parse(self, response):
         reportUrlLinksLst = response.xpath('//*[@id="content"]/div[3]/div[1]/div[1]/div[2]/div/div/ul/li/a/@href').extract()

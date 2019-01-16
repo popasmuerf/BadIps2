@@ -11,8 +11,8 @@ import datetime
 class flu_rider(scrapy.Spider):
     name = 'flu'
     #allowed_domains = ['https://www.badips.com/info/1']
-    start_urls = ['https://www.gov.uk/government/statistics/weekly-national-flu-reports-2018-to-2019-season']
-
+    #start_urls = ['https://www.gov.uk/government/statistics/weekly-national-flu-reports-2018-to-2019-season']
+    start_urls = ['https://www.gov.uk/government/collections/weekly-national-flu-reports']
     #now = datetime.datetime.now()
     #year = now.year
 

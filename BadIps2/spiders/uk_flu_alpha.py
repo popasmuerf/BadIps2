@@ -13,9 +13,17 @@ class uk_flu_alpha(scrapy.Spider):
     now =  datetime.datetime.now()
     this_year = now.year
     last_year = this_year - 1
-    cutoff_year = 2019
     name = 'alpha'
     start_urls = ['https://www.gov.uk/government/collections/weekly-national-flu-reports']
+
+    '''re patterns'''
+
+    full_url_pttrn = 'http(s){0,1}://(\w+\.){1,10}\w+(\/\w+){1,10}\.(pdf|ods|xls|xlsx|xlsm|doc|docx|docm|sxw|stw|doc|xml)'
+
+    part_url_pattrn = '(\/\w+){1,10}.pdf'
+
+
+
 
 
 
@@ -56,6 +64,9 @@ class uk_flu_alpha(scrapy.Spider):
 
 
     def parse_season_reports(self,response):
+        '''
+        1.
+        '''
         pass
 
     def downLoadReport(self, response):

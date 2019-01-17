@@ -33,19 +33,29 @@ class uk_flu_alpha(scrapy.Spider):
             exit(-1)
         else:
             logging.log(logging.INFO, '*****************************************************************************')
-            logging.log(logging.INFO, "Something went left........There doesn't seem to be a listing of seasons currently provided... :-(")
+            logging.log(logging.INFO, "Found seasonal reports listing...........")
             logging.log(logging.INFO, '*****************************************************************************')
-            for suffix in url_suffix_list:
-                #print "----> report suffix: " +  suffix + " <----"
-                sr_url_lst = self.url_prefix + suffix
-                print "<---- seasonal reports url: " +  sr_url_lst+ " ---->"
+            if  self.if_pr() == False:
+                for suffix in url_suffix_list:
+                    sr_url_lst = self.url_prefix + suffix
+                    print "<---- seasonal reports url: " +  sr_url_lst+ " ---->"
+                    yield scrapy.http.Request(url=sr_url_lst, callback=self.parse_season_reports)
+            else:
+                for suffix in url_suffix_list:
+                    if str(self.this_year) not in suffix:
+                        pass
+                    else:
+                        sr_url_lst = self.url_prefix + suffix
+                        print "<---- seasonal reports url: " +  sr_url_lst+ " ---->"
 
 
 
 
 
 
-    def parse_season_reports(self):
+
+
+    def parse_season_reports(self,response):
         pass
 
     def downLoadReport(self, response):
@@ -58,7 +68,7 @@ class uk_flu_alpha(scrapy.Spider):
 
 
     def if_pr(self):
-        return False
+        return True
 
     def checkYear(self):
         now = datetime.datetime.now()

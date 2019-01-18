@@ -10,6 +10,7 @@ import datetime
 
 class uk_flu_alpha(scrapy.Spider):
     url_prefix = 'https://www.gov.uk'
+    report_url_prefix = 'https://assets.publishing.service.gov.uk'
     now =  datetime.datetime.now()
     this_year = now.year
     last_year = this_year - 1

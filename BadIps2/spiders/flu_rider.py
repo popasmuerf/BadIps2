@@ -11,6 +11,7 @@ import datetime
 class flu_rider(scrapy.Spider):
     '''global configurations'''
     urlPrefix = 'https://www.gov.uk'
+    reportUrlPrefix = 'https://assets.publishing.service.gov.uk'
     now =  datetime.datetime.now()
     thisYear = now.year
     lastYear = thisYear - 1
@@ -53,4 +54,25 @@ class flu_rider(scrapy.Spider):
 
 
     def parseSeasonalReports(self,response):
+        '''Some of these urls embedded into the html are only partial...we need to check
+           for this and and complete the url where ever we find them.....'''
+        urLst  = response.xpath('//*/div[2]/h2/a/@href').extract()
+        for _url in urLst:
+            result = re.findall('https{0,1}://',_url)
+            if result:
+                print _url
+
+            else:
+                _url = self.reportUrlPrefix + _url
+                print _url
+        pass
+
+
+    def parseWeeklyReports(self,response):
+        pass
+
+
+
+
+    def downloadReport(self):
         pass

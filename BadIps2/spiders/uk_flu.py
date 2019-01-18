@@ -9,7 +9,7 @@ import datetime
 
 
 class flu_rider(scrapy.Spider):
-    cutoff_year = 2019
+    cutoff_year = 2020
     name = 'uk_flu'
     start_urls = ['https://www.gov.uk/government/collections/weekly-national-flu-reports']
 

@@ -9,13 +9,12 @@ import datetime
 
 
 class uk_flu_alpha(scrapy.Spider):
-    url_prefix = 'https://www.gov.uk/government/collections/weekly-national-flu-reports'
+    url_prefix = 'https://www.gov.uk'
     now =  datetime.datetime.now()
     this_year = now.year
     last_year = this_year - 1
     name = 'alpha'
     start_urls = ['https://www.gov.uk/government/collections/weekly-national-flu-reports']
-
     '''re patterns'''
 
     full_url_pttrn = 'http(s){0,1}://(\w+\.){1,10}\w+(\/\w+){1,10}\.(pdf|ods|xls|xlsx|xlsm|doc|docx|docm|sxw|stw|doc|xml)'
@@ -32,7 +31,8 @@ class uk_flu_alpha(scrapy.Spider):
         logging.log(logging.INFO, '*****************************************************************************')
         logging.log(logging.INFO, "Attempting to extract the season report listing...........")
         logging.log(logging.INFO, '*****************************************************************************')
-        url_suffix_list = response.xpath('//*[@id="contents"]/div[1]/nav/ol/li/a/@href').extract()
+        #url_suffix_list = response.xpath('//*[@id="contents"]/div[1]/nav/ol/li/a/@href').extract()
+        url_suffix_list = response.xpath('//*[@id="contents"]/div[2]/div/ol/li/a/@href').extract()
         sr_url_lst = list()
         if not url_suffix_list:
             logging.log(logging.INFO, '*****************************************************************************')
@@ -43,11 +43,13 @@ class uk_flu_alpha(scrapy.Spider):
             logging.log(logging.INFO, '*****************************************************************************')
             logging.log(logging.INFO, "Found seasonal reports listing...........")
             logging.log(logging.INFO, '*****************************************************************************')
+
             if  self.if_pr() == False:
                 for suffix in url_suffix_list:
-                    sr_url_lst = self.url_prefix + suffix
-                    print "<---- seasonal reports url: " +  sr_url_lst+ " ---->"
-                    yield scrapy.http.Request(url=sr_url_lst, callback=self.parse_season_reports)
+                    #sr_url_lst = self.url_prefix + suffix
+                    #print "<---- seasonal reports url: " +  sr_url_lst+ " ---->"
+                    print "===> " + suffix
+                    yield scrapy.http.Request(url=suffix, callback=self.parse_season_reports)
             else:
                 for suffix in url_suffix_list:
                     if str(self.this_year) not in suffix:
@@ -65,7 +67,9 @@ class uk_flu_alpha(scrapy.Spider):
 
     def parse_season_reports(self,response):
         '''
-        1.
+        re.search(pattern, string, flags=0)
+        re.match(pattern, string, flags=0)
+        re.fullmatch(pattern, string, flags=0)
         '''
         pass
 
@@ -79,7 +83,7 @@ class uk_flu_alpha(scrapy.Spider):
 
 
     def if_pr(self):
-        return True
+        return False
 
     def checkYear(self):
         now = datetime.datetime.now()

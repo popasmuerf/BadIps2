@@ -49,11 +49,25 @@ class flu_rider(scrapy.Spider):
                 yield scrapy.Request(url=thisYearSeasonalReportUrl, callback=self.parseSeasonalReports)
             else:
                 for _url in nextUrlList:
-                    yield scrapy.Request(url=_url, callback=self.parseSeasonalReports)
+                    yield scrapy.Request(url=_url, callback=self.parseAllSeasonalReports)
 
 
+    def getMoth(self):
+        #create month map
+        #create
 
-    def parseSeasonalReports(self,response):
+    def parsSeasonalReports(self,response):
+        #get link to weekly reports
+        #follow weekly reports path
+        pass
+
+    def parseWeeklyReports(selfs,response):
+        #get the current month
+        #get list of reports for that month
+        #download these reports
+        pass
+
+    def parseAllSeasonalReports(self,response):
         '''Some of these urls embedded into the html are only partial...we need to check
            for this and and complete the url where ever we find them.....'''
         urLst  = response.xpath('//*/div[2]/h2/a/@href').extract()

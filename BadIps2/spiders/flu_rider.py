@@ -17,19 +17,7 @@ class flu_rider(scrapy.Spider):
     lastYear = thisYear - 1
     thisYearStr = str(thisYear)
     lastYearStr = str(lastYear)
-    monthLst = ["null_month"
-                 "january",
-                 "February",
-                 "March",
-                 "April",
-                 "May",
-                 "June",
-                 "July",
-                 "August",
-                 "September",
-                 "October",
-                 "November",
-                 "December",]
+
     prevRunFlag = False
 
 
@@ -39,10 +27,6 @@ class flu_rider(scrapy.Spider):
     '''re patterns'''
     full_url_pttrn = 'http(s){0,1}://(\w+\.){1,10}\w+(\/\w+){1,10}\.(pdf|ods|xls|xlsx|xlsm|doc|docx|docm|sxw|stw|doc|xml)'
     part_url_pattrn = '(\/\w+){1,10}.pdf'
-
-
-
-
 
 
     def parse(self,response):
@@ -56,46 +40,32 @@ class flu_rider(scrapy.Spider):
             if result:
                 thisYearSeasonalReportUrl = self.urlPrefix + s
         if not nextUrlList:
-            #log
             exit()
         else:
             if self.prevRunFlag:
-                yield scrapy.Request(url=thisYearSeasonalReportUrl, callback=self.parseSeasonalReports)
+                weeklyReportUrl = 'https://www.gov.uk/government/collections/weekly-national-flu-reports'
+                yield scrapy.Request(url=weeklyReportUrl, callback=self.getWeeklyList)
             else:
                 for _url in nextUrlList:
                     yield scrapy.Request(url=_url, callback=self.parseAllSeasonalReports)
 
 
-    def getMonth(self):
-        #create month map
-        #create
-        pass
-
-    def parsSeasonalReports(self,response):
-        #get link to weekly reports
-        #follow weekly reports path
-        urllist = response.xpath('//*[@id="content"]/div[3]/div[2]/div/div/nav/ul/li[1]/a/@href').extract()
-        #check if urlist is empty
-        if not urllist:
-            exit(-1)
-        else:
-            _url = urllist[1]
+    def getWeeklyList(self,response):
+        urllist = response.xpath('//*[@id="contents"]/div[2]/div/ol/li/a/@href').extract()
+        substr = 'weekly-national-flu-reports-' + self.lastYearStr + '-to-'+ 'self.thisYearStr' + '-season'
+        for _url in urllist:
+            foundThisYearFlag = _url.find(substr)!= -1
             result = re.findall('https{0,1}://',_url)
-            if result:
-                _url = 'https://www.gov.uk/government/collections/weekly-national-flu-reports'
-                #call parseWeeklyReports
-                pass
+            if foundThisYearFlag and result:
+                yield scrapy.Request(url=_url,callback=self.downloadWeeklyReport)
             else:
-                _url =  'https://www.gov.uk' + _url
-                #call parseWeeklyReports
-                pass
+                _url =  self.urlPrefix + _url
+                yield scrapy.Request(url=_url,callback=self.downloadWeeklyReport)
 
 
-    def parseWeeklyReports(selfs,response):
-        #get the current month
-        #get list of reports for that month
-        #download these reports
-        pass
+
+
+
 
     def parseAllSeasonalReports(self,response):
         '''Some of these urls embedded into the html are only partial...we need to check
@@ -112,31 +82,18 @@ class flu_rider(scrapy.Spider):
 
 
 
-def parseWeeklyReports(self,response):
-    urllist = response.xpath('//*[@id="contents"]/div[2]/div/ol/li/a/@href').extract()
-    if not urllist:
-        exit(-1)
-    else:
+
+    def downloadWeeklyReport(self,response):
+        from datetime import date
+        weekNum = date.today().isocalendar()[1]
+        urllist = response.xpath('//*/div[2]/h2/a/@href').extract()
+
         for _url in urllist:
-            if _url.find(self.thisYearStr) == -1:
-                pass
-            else:
+            weekFlag =  _url.find(self.thisYearStr) != -1
+            if weekFlag:
                 result = re.findall('https{0,1}://',_url)
                 if result:
-                    #follw path and download all files
-                    pass
+                    print _url
                 else:
-                    _url = self.reportUrlPrefix + _url
-                    #follow path and download all files
-
-
-
-
-
-
-
-def downloadAllReports(self,response):
-    monthInt = self.now.month
-    monthStr = self.monthLst[monthInt]
-
-    pass
+                    urlComplete = self.urlPrefix + _url
+                    print urlComplete

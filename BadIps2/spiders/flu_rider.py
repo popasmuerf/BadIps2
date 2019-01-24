@@ -18,7 +18,7 @@ class flu_rider(scrapy.Spider):
     thisYearStr = str(thisYear)
     lastYearStr = str(lastYear)
 
-    prevRunFlag = False
+    prevRunFlag = True
 
 
     name = 'rider'
@@ -75,7 +75,6 @@ class flu_rider(scrapy.Spider):
             result = re.findall('https{0,1}://',_url)
             if result:
                 print _url
-
         else:
             _url = self.reportUrlPrefix + _url
             print _url
@@ -86,14 +85,17 @@ class flu_rider(scrapy.Spider):
     def downloadWeeklyReport(self,response):
         from datetime import date
         weekNum = date.today().isocalendar()[1]
+        weekNumStr = str(weekNum)
         urllist = response.xpath('//*/div[2]/h2/a/@href').extract()
 
         for _url in urllist:
-            weekFlag =  _url.find(self.thisYearStr) != -1
-            if weekFlag:
+            yearFlag = _url.find(self.thisYearStr) != -1
+            weekFlag =  _url.find('week_' + weekNumStr + '_' + self.thisYearStr) != -1
+
+            if weekFlag and yearFlag:
                 result = re.findall('https{0,1}://',_url)
                 if result:
                     print _url
                 else:
                     urlComplete = self.urlPrefix + _url
-                    print urlComplete
+                    #print urlComplete

@@ -26,7 +26,7 @@ class uk_flu_beta(scrapy.Spider):
     def parse(self,response):
         _urls = response.xpath('//*[@id="read"]/ul[6]/li/a/@href').extract()
         for item in _urls:
-            logging.log(logging.INFO, item +  ": in parse()")
+            #logging.log(logging.INFO, item +  ": in parse()")
             yield scrapy.http.Request(url=item, callback=self.parseAlpha)
 
 
@@ -35,21 +35,27 @@ class uk_flu_beta(scrapy.Spider):
         _urls = response.xpath('//*[@id="read"]/ul[3]/li/a/@href').extract()
         if _dataConsciderations:
             for item in _dataConsciderations:
-                self.downLoadReportAlpha(item)
+                pass
         #logging.log(logging.INFO, '*****************************************************************************')
         for item in _urls:
-            #logging.log(logging.INFO, item +  ": in parseAlpha()")
-            #yield scrapy.http.Request(url=item, callback=self.parseBeta) 
+            logging.log(logging.INFO, item +  ": in parseAlpha()")
+            yield scrapy.http.Request(url=item, callback=self.parseBeta)
             #logging.log(logging.INFO, '*****************************************************************************')
             pass
 
     def parseBeta(self,response):
-        _urls = response.xpath('//*[@id="read"]/ul[3]/li/a').extract()
+        prefix = 'http://www.health.gov.au/internet/main/publishing.nsf/'
+        #_urls = response.xpath('//*[@id="read"]/ul[3]/li/a').extract()
+        #_urls = response.xpath('//*[@id="read"]/ul[3]/li/a/@href').extract()
+        # _urls = response.xpath('//*[@id="read"]/ul[3]/li[1]/a').extract()
+        _urls = response.xpath('//*[@id="read"]/ul[3]/li/a/@href').extract()
+
         if(_urls):
             for item in _urls:
                 #logging.log(logging.INFO, item +  ": in parseBeta()")
-                pass 
-            
+                _url = prefix + item
+                #print _url
+                self.downLoadReportAlpha(_url)
         
 
     def parseGamma(self,response):
